@@ -78,8 +78,12 @@ def login(username: str, password: str) -> tuple:
         raise LDAPConnectionError({"error_message": error})
 
     # authenticate as service if credentials provided, anonymously otherwise
+    #if %s is in the bind_dn map the login creds to it to attempt a login with that instead
     if BIND_DN is not None and BIND_DN != '':
-        service_user = BIND_DN
+        if '%s' in BIND_DN:
+            service_user = BIND_DN  % login
+        else:
+            service_user = BIND_DN
         service_pass = BIND_PASSWORD
         service_auth = SIMPLE
     else:
@@ -99,8 +103,7 @@ def login(username: str, password: str) -> tuple:
         raise LDAPConnectionError({"error_message": error})
 
     # search for user-provided login
-    search_filter = '(|(%s=%s)(%s=%s))' % (
-        USERNAME_ATTRIBUTE, username, EMAIL_ATTRIBUTE, username)
+    search_filter = '(&(objectclass=person)(%s=%s))' % (USERNAME_ATTRIBUTE, login)
     if SEARCH_FILTER_ADDITIONAL:
         search_filter = '(&%s%s)' % (search_filter, SEARCH_FILTER_ADDITIONAL)
     try:
