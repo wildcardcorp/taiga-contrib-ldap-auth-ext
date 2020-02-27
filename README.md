@@ -45,9 +45,12 @@ LDAP_START_TLS = False
 #LDAP_TLS_CERTS = Tls(validate=ssl.CERT_NONE, version=ssl.PROTOCOL_TLSv1, ciphers='RSA+3DES')
 
 # Full DN of the service account use to connect to LDAP server and search for login user's account entry
-# If LDAP_BIND_DN is not specified, or is blank, then an anonymous bind is attempated
-LDAP_BIND_DN = 'CN=SVC Account,OU=Service Accounts,OU=Servers,DC=example,DC=com'
-LDAP_BIND_PASSWORD = '<REPLACE_ME>'
+# If LDAP_BIND_DN is not specified, or is blank, then an anonymous bind is attempted
+#LDAP_BIND_DN = 'CN=SVC Account,OU=Service Accounts,OU=Servers,DC=example,DC=com'
+#If you put a %s you can use the string to bind to ldap first,such as with FreeIPA the example is as follows
+# %s is then provided with the username of the logging in user, to first bind, then search (needed to obtain email address #on Freeipa and possibly others
+LDAP_BIND_DN = 'uid=%s,cn=users,cn=accounts,dc=example,dc=lan'
+#LDAP_BIND_PASSWORD = '<REPLACE_ME>'
 
 # Starting point within LDAP structure to search for login user
 LDAP_SEARCH_BASE = 'OU=DevTeam,DC=example,DC=net'
